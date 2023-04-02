@@ -1,0 +1,8 @@
+Flask
+pandas
+fuzzywuzzy
+numpy
+tensorflow
+opencv-python-headless
+Keras
+matplotlib
