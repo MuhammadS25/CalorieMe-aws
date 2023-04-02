@@ -2,7 +2,7 @@ Flask
 pandas
 fuzzywuzzy
 numpy
-tensorflow
+python-Levenshtein
+tensorflow-cpu
 opencv-python-headless
 Keras
-matplotlib
