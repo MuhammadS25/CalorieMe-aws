@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import matplotlib.pyplot as plt
+import Test, CaloriesEstimation
 app = Flask(__name__)
 
 
@@ -8,22 +8,20 @@ def hello_world():
     return 'CalorieMe API'
 
 
-@app.route('/CalorieMe', methods=['POST'])
+@app.route('/CalorieMe', methods=['GET','POST'])
 def predict():
-    if 'image' not in request.files:
-        return "No image file"
-
     if request.method == 'POST':
-        file = request.files['image']
-        # plt.imshow(file)
-        # plt.show()
-        return "Image received successfully."
-    else :
-        return "Invalid request method"
+        img_link = request.form['img_link']
+        img_pixels = request.form['img_pixels']
+
+        label = Test.getFoodWeight(img_link, img_pixels)
+        json = CaloriesEstimation.getCalories(label)
+        return jsonify(json)
+
 
 @app.route('/test', methods=['POST'])
 def test():
     return request.form['text']
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=8080,debug=True)
