@@ -14,9 +14,12 @@ def predict():
         img_link = request.form['img_link']
         img_pixels = request.form['img_pixels']
 
+        print(img_link, img_pixels)
+
         label = Test.getFoodWeight(img_link, img_pixels)
         json = CaloriesEstimation.getCalories(label)
         return jsonify(json)
+        return jsonify({'msg': 'success', 'size': [img_link, img_pixels]})
 
 
 @app.route('/test', methods=['POST'])
@@ -24,4 +27,4 @@ def test():
     return request.form['text']
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=8080,debug=True)
+    app.run(debug=True)

@@ -20,7 +20,10 @@ class FoodModel:
 
     def read_image(self,image_path):
     
-        image = tf.io.read_file(image_path)
+        #image = tf.io.read_file(image_path)
+        # load img from internet
+        image = tf.keras.utils.get_file('image.jpg', image_path)
+        image = tf.io.read_file(image)
         image = tf.image.decode_png(image, channels=3)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, self.imgSize, method='nearest')
