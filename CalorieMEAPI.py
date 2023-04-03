@@ -10,16 +10,20 @@ def hello_world():
 
 @app.route('/CalorieMe', methods=['GET','POST'])
 def predict():
-    if request.method == 'POST':
-        img_link = request.form['img_link']
-        img_pixels = request.form['img_pixels']
+    try:
+        if request.method == 'POST':
+            img_link = request.form['img_link']
+            img_pixels = request.form['img_pixels']
 
-        print(img_link, img_pixels)
+            print(img_link, img_pixels)
 
-        label = Test.getFoodWeight(img_link, img_pixels)
-        json = CaloriesEstimation.getCalories(label)
-        return jsonify(json)
-        return jsonify({'msg': 'success', 'size': [img_link, img_pixels]})
+            label = Test.getFoodWeight(img_link, img_pixels)
+            json = CaloriesEstimation.getCalories(label)
+            return jsonify(json)
+            return jsonify({'msg': 'success', 'size': [img_link, img_pixels]})
+    
+    except Exception as e:
+        return jsonify({'msg': 'error', 'error': str(e)})
 
 
 @app.route('/test', methods=['POST'])
