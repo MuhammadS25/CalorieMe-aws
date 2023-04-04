@@ -46,7 +46,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
         Food_Size = (pixels / int(id_pixel_count)) * id_card_height * id_card_width
         Food_Weight = Food_Size**3 * Density / Reference_Volume
         
-        labels[str(cat+1)] = Food_Weight
+        labels[str(categories(cat))] = Food_Weight
         print("Pixels of ",cat,pixels)
         foodWhite_pixels = max(foodModel.getSizeOfMask(mask, cat),foodWhite_pixels)
 
