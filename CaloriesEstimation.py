@@ -59,18 +59,25 @@ def getCalories(labels):
     # print labels
     print(keys_to_save)
 
-    # Estimation Equation
     total_calories = 0
     for label in keys_to_save.keys():
-        calories = data.loc[data['Food'] == label, 'Calories'].values[0]
-        calories = int((int, re.findall(r'\d+', calories))[1][0])
+        calories_series = data.loc[data['Food'] == label, 'Calories']
+        if calories_series.empty:
+            # handle the case when no matching row is found
+            continue
 
-        serving = data.loc[data['Food'] == label, 'Serving'].values[0]
-        serving = int((int, re.findall(r'\d+', serving))[1][1])
+        calories = int((int, re.findall(r'\d+', calories_series.values[0]))[1][0])
 
-        # Estimation Equation
-        estimated_calories = calories * labels[label] / serving
+        serving_series = data.loc[data['Food'] == label, 'Serving']
+        if serving_series.empty:
+            continue
+
+        serving = int((int, re.findall(r'\d+', serving_series.values[0]))[1][1])
+
+    # Estimation Equation
+        estimated_calories = calories * keys_to_save[label] / serving
         total_calories += estimated_calories
+
 
     # print estimated_calories with 1 decimal places
     print(f'Estimated calories: {total_calories:.1f}')
