@@ -2,6 +2,7 @@ import pandas as pd
 import re
 from fuzzywuzzy import process
 import Test
+import json
 
 
 def getCalories(labels):
@@ -34,17 +35,6 @@ def getCalories(labels):
             # append category to missing categories
             missing_categories.append(category)
 
-    # # for every missing category in missing categories extractOne from data['food']
-    # i=1
-    # for category in missing_categories:
-    #     print(i,' ',category,' ', process.extractOne(category, data['Food']))
-    #     i+=1
-
-    # print common categories length
-    print(len(commonCategories))
-
-    # print missing categories length
-    print(len(missing_categories))
 
     keys_to_save = {}
 
@@ -59,6 +49,7 @@ def getCalories(labels):
     # print labels
     print(keys_to_save)
 
+    cal_map = {}
     total_calories = 0
     for label in keys_to_save.keys():
         calories_series = data.loc[data['Food'] == label, 'Calories']
@@ -77,15 +68,10 @@ def getCalories(labels):
     # Estimation Equation
         estimated_calories = calories * keys_to_save[label] / serving
         total_calories += estimated_calories
+        cal_map[label] = estimated_calories
 
 
     # print estimated_calories with 1 decimal places
     print(f'Estimated calories: {total_calories:.1f}')
 
-    # create json object that contains estimated calories and label keys
-    json = {
-        'Ingredients': list(keys_to_save.keys()),
-        'Calories': total_calories
-    }
-
-    return json
+    return json.dumps(cal_map)
