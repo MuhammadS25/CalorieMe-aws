@@ -19,7 +19,7 @@ def predict():
 
             label = Test.getFoodWeight(img_link, img_pixels)
             # return labels in json format
-            return jsonify({'msg': 'success', 'label': label})
+            #return jsonify({'msg': 'success', 'label': label})
             json = CaloriesEstimation.getCalories(label)
             return jsonify(json)
             return jsonify({'msg': 'success', 'size': [img_link, img_pixels]})
