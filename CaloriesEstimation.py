@@ -54,6 +54,9 @@ def getCalories(labels):
 
     for key in keys_to_remove:
         labels.pop(key)
+        
+    # print labels
+    print(labels)
 
     # Estimation Equation
     total_calories = 0
