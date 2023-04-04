@@ -20,7 +20,8 @@ class FoodModel:
         # load img from internet
         response = requests.get(image_url)
         image = response.content
-        image = tf.image.decode_png(image, channels=3)
+        image = tf.image.decode_image(image, channels=3)
+        #image = tf.image.decode_png(image, channels=3)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, self.imgSize, method='nearest')
 
