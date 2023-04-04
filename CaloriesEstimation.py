@@ -29,7 +29,7 @@ def getCalories(labels):
     for category in categories:
         if process.extractOne(category, desiredCategories)[1] >= 75:
             # append matched from desiredCategories to commonCategories
-            commonCategories.append(desiredCategories[process.extractOne(category, desiredCategories)[2]])
+            commonCategories.append(process.extractOne(category, desiredCategories)[0])
         else:
             # append category to missing categories
             missing_categories.append(category)
