@@ -1,8 +1,10 @@
+from io import BytesIO
 import numpy as np
 from tensorflow import keras
 import tensorflow as tf
 import numpy as np
 import requests
+from PIL import Image
 
 class FoodModel:
     def __init__(self ,modelpath , imgpath):
@@ -15,8 +17,15 @@ class FoodModel:
         return model
 
     def read_image(self, image_url):
+        # Download the image
         response = requests.get(image_url)
-        image = tf.image.decode_image(response.content, channels=3)
+        image = Image.open(BytesIO(response.content))
+
+        # Save the image with new extension
+        new_img_path = 'new_image.jpg'
+        image.save(new_img_path, 'JPEG')
+        image = tf.io.read_file(new_img_path)
+        image = tf.image.decode_jpeg(response.content, channels=3)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, self.imgSize, method='nearest')
         return image
