@@ -23,12 +23,11 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     mask = foodModel.get_mask(image, model)
     cat_values = np.unique(mask)
 
-    # create dictionary of categories and weights
     labels = {}
-
+    categories = {}
 
     with open('category.txt', 'r') as f:
-        categories = f.read()
+        categories = dict(enumerate(f.read().splitlines()))
 
     #Id card real dimensions in cm
     id_card_width = 8.56
@@ -45,15 +44,12 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
         Reference_Volume = id_card_height * id_card_width * 0.1
         Food_Size = (pixels / int(id_pixel_count)) * id_card_height * id_card_width
         Food_Weight = Food_Size**3 * Density / Reference_Volume
-        
-        labels[categories(int(cat))] = Food_Weight
-        print("Pixels of ",cat,pixels)
+
+        labels[categories[cat]] = Food_Weight
+        print("Pixels of ", categories[cat], pixels)
         foodWhite_pixels = max(foodModel.getSizeOfMask(mask, cat),foodWhite_pixels)
 
     print("Food Pixels",foodWhite_pixels)
 
     return labels
 
-
-
-#Equation to calculate food volume
