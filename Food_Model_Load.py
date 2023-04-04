@@ -14,17 +14,16 @@ class FoodModel:
         model = keras.models.load_model(self.modelpath)
         return model
 
-    def read_image(self,image_url):
-    
-        #image = tf.io.read_file(image_path)
-        # load img from internet
+    def read_image(self, image_url):
+        # Download image data
         response = requests.get(image_url)
-        image = response.content
-        image = tf.image.decode_image(image, channels=3)
-        #image = tf.image.decode_png(image, channels=3)
+        image_data = response.content
+        
+        # Decode image
+        image = tf.image.decode_image(image_data, channels=3)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, self.imgSize, method='nearest')
-
+        
         return image
 
    
