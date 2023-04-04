@@ -21,7 +21,7 @@ def getCalories(labels):
     desiredCategories = data['Food'].tolist()
 
     # lower each category in desiredCategories
-    desiredCategories = [category.lower() for category in desiredCategories]
+    #desiredCategories = [category.lower() for category in desiredCategories]
 
     commonCategories = []
     missing_categories = []
