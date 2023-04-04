@@ -74,4 +74,8 @@ def getCalories(labels):
     # print estimated_calories with 1 decimal places
     print(f'Estimated calories: {total_calories:.1f}')
 
-    return json.dumps(cal_map)
+    json = {}
+    for key, value in cal_map.items():
+        json[key] = value
+
+    return json
