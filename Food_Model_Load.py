@@ -15,15 +15,10 @@ class FoodModel:
         return model
 
     def read_image(self, image_url):
-        # Download image data
         response = requests.get(image_url)
-        image_data = response.content
-        
-        # Decode image
-        image = tf.image.decode_image(image_data, channels=3)
+        image = tf.image.decode_image(response.content, channels=3)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, self.imgSize, method='nearest')
-        
         return image
 
    
