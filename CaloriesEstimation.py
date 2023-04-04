@@ -28,9 +28,10 @@ def getCalories(labels):
     # for every missing category in missing categories extractOne from data['food'] if score is greater than 90 add to common categories
     for category in categories:
         if process.extractOne(category, desiredCategories)[1] >= 75:
-            commonCategories.append(category)
+            # append matched from desiredCategories to commonCategories
+            commonCategories.append(desiredCategories[process.extractOne(category, desiredCategories)[2]])
         else:
-            # add category from missing categories
+            # append category to missing categories
             missing_categories.append(category)
 
     # # for every missing category in missing categories extractOne from data['food']
