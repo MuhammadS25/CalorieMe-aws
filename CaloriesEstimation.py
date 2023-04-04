@@ -46,22 +46,22 @@ def getCalories(labels):
     # print missing categories length
     print(len(missing_categories))
 
-    keys_to_remove = []
-    #check if label is in missing categories
-    for label in labels.keys():
-        if process.extractOne(label, missing_categories)[1] >= 90 and label not in commonCategories:
-            print(label, 'not found')
-            keys_to_remove.append(label)
+    keys_to_save = {}
 
-    for key in keys_to_remove:
-        labels.pop(key)
+    for label in labels.keys():
+        if process.extractOne(label, commonCategories)[1] >= 90 and label not in commonCategories:
+            print(label, 'not found')
+        else:
+            keys_to_save[process.extractOne(label, commonCategories)[0]] = labels[label]
+
+
         
     # print labels
-    print(labels)
+    print(keys_to_save)
 
     # Estimation Equation
     total_calories = 0
-    for label in labels.keys():
+    for label in keys_to_save.keys():
         calories = data.loc[data['Food'] == label, 'Calories'].values[0]
         calories = int((int, re.findall(r'\d+', calories))[1][0])
 
@@ -77,7 +77,7 @@ def getCalories(labels):
 
     # create json object that contains estimated calories and label keys
     json = {
-        'Ingredients': list(labels.keys()),
+        'Ingredients': list(keys_to_save.keys()),
         'Calories': total_calories
     }
 
