@@ -43,7 +43,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
 
         pixels = np.count_nonzero(mask == cat)
         Reference_Volume = id_card_height * id_card_width * 0.1
-        Food_Size = (pixels / id_pixel_count) * id_card_height * id_card_width
+        Food_Size = (pixels / int(id_pixel_count)) * id_card_height * id_card_width
         Food_Weight = Food_Size**3 * Density / Reference_Volume
         
         labels[cat+1] = Food_Weight
