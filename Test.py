@@ -1,67 +1,89 @@
 import numpy as np
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import requests
+import warnings
+warnings.filterwarnings("ignore")
 
-import Food_Model_Load
+class FoodModel:
+    def __init__(self ,modelpath , imgpath):
+        self.modelpath = modelpath
+        self.imgpath = imgpath
+        self.imgSize = (256,256)
 
-def getFoodWeight(foodImgPath='',id_pixel_count=0):
-    # imgpath = 'Images/mid2.png'
+    def loadmodel(self):
+        model = keras.models.load_model(self.modelpath)
+        return model
 
-    # #initiating ID Model
-    # ID_modelpath = 'ID_card Model/unet_model_whole_100epochs.h5'
+    def read_image(self,image_url):
+        response = requests.get(image_url)
+        image = tf.image.decode_png(response.content, channels=3)
+        print(image.shape)
+        h,w = image.shape[:2]
+        image = tf.image.convert_image_dtype(image, tf.float32)
+        image = tf.image.resize(image, (256,256), method='nearest')
 
-    # idModel = ID_Model_Load.IdModel(ID_modelpath, imgpath)
-    # id_pixel_count = idModel.predict()
-    # print("ID Pixels",id_pixel_count)
+        image = tf.expand_dims(image, 0)
+        print(image.shape)
+
+        return image, h, w
+
+   
+    def create_mask(self, pred_mask):
+        pred_mask = tf.argmax(pred_mask, axis=-1)
+        pred_mask = pred_mask[..., tf.newaxis]
+        return pred_mask[0]
+    
+    
+    def get_mask(self, image, model, h, w):
+        print(image.shape)
+        pred_mask = self.create_mask(model.predict(image))
+        mask = tf.image.resize(pred_mask, (h, w), method='nearest')
+        return mask.numpy().astype("uint8").squeeze(axis=2)
+    
+    def getSizeOfMask(self, mask, num):
+        white_pixels = np.count_nonzero(mask == num)
+        return white_pixels
+    
+    # read bounding box file 
+    def read_bbox_file(self, file_path):
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+            bbox_list = []
+            for line in lines:
+                bbox_list.append([int(line.split(' ')[0]), float(line.split(' ')[1]), float(line.split(' ')[2]), float(line.split(' ')[3]), float(line.split(' ')[4])])
+        return bbox_list
+
+    # matching the pixels of the mask with the bounding boxes class
+    def match_mask_with_bbox(self, mask, bbox, ah, aw):
+        for i in range(len(bbox)):
+            x = int(bbox[i][1]*aw)
+            y = int(bbox[i][2]*ah)
+            w = int(bbox[i][3]*aw)
+            h = int(bbox[i][4]*ah)
+            for j in range(x-w//2, x+w//2):
+                for k in range(y-h//2, y+h//2):
+                    if(mask[k][j] != 0):
+                        mask[k][j] = bbox[i][0] + 1
+        return mask
+
+    def get_cat_percentage(self, mask, cat):
+        white_pixels = np.count_nonzero(mask == cat)
+        total_pixels = mask.shape[0] * mask.shape[1]
+        return white_pixels/total_pixels * 100 
 
 
-    #initiating Food Model
-    Food_modelpath = 'Food_Model/cp2.h5'
-    foodModel= Food_Model_Load.FoodModel(Food_modelpath, foodImgPath)
-    model = foodModel.loadmodel()
-    image = foodModel.read_image(foodImgPath)
-    image = tf.expand_dims(image, 0)
-    mask = foodModel.get_mask(image, model)
-    cat_values = np.unique(mask)
-
-    labels = {}
-    categories = {}
-
-    with open('category.txt', 'r') as f:
-        categories = dict(enumerate(f.read().splitlines()))
-
-    #Id card real dimensions in cm
-    id_card_width = 8.56
-    id_card_height = 5.398
-    Density = 1.38
-
-    print(cat_values)
-    foodWhite_pixels = 0
-    for cat in cat_values:
-        if cat == 0:
-            continue
-
-        pixels = np.count_nonzero(mask == cat)
-        Reference_Volume = id_card_height * id_card_width * 0.1
-        Food_Size = (pixels / int(id_pixel_count)) * id_card_height * id_card_width
-        Food_Weight = Food_Size**3 * Density / Reference_Volume
-
-        labels[categories[cat]] = Food_Weight
-        print("Pixels of ", categories[cat], pixels)
-        foodWhite_pixels = max(foodModel.getSizeOfMask(mask, cat),foodWhite_pixels)
-
-    print("Food Pixels",foodWhite_pixels)
-
-    return labels
-
-
-def getFoodWeightV2(imgLink, img_size):
-    modelpath = 'Food_Model/cp2.h5'
-    yolo_dir = 'yolov5'
-    img_name = imgLink.split('/')[-1].split('.')[0]
-    foodmodel= Food_Model_Load.FoodModel(modelpath, imgLink)
-
+if __name__ == "__main__":
+    modelpath = '/mnt/00F26D4EF26D494C/college/gp/Calories-Estimator/Food_Model/cp2.h5'
+    imgpath = '/mnt/00F26D4EF26D494C/college/gp/foodDetection/models_integration/fries.jpg'
+    yolo_dir = '/home/bvm/Downloads/kaggle/working/yolov5'
+    img_name = imgpath.split('/')[-1].split('.')[0]
+    foodmodel = FoodModel(modelpath, imgpath)
     model = foodmodel.loadmodel()
-    image, ah, aw = foodmodel.read_image(imgLink)
+    image, ah, aw = foodmodel.read_image(imgpath)
     image = tf.expand_dims(image, 0)
     mask = foodmodel.get_mask(image, model, ah, aw)
     bbox = foodmodel.read_bbox_file('{}/runs/detect/exp/labels/{}.txt'.format(yolo_dir, img_name))
@@ -69,39 +91,12 @@ def getFoodWeightV2(imgLink, img_size):
     img = tf.image.resize(image, (ah, aw), method='nearest')
     img = img[0].numpy()
 
-
-    #Id card real dimensions in cm
-    id_card_width = 8.56
-    id_card_height = 5.398
-    Density = 1.38
-
-    labels = {}
-    categories = {}
-
-    with open('category.txt', 'r') as f:
-        categories = dict(enumerate(f.read().splitlines()))
-
     cat_values = np.unique(mask)
     print(cat_values)
-    foodWhite_pixels = 0
-
     for cat in cat_values:
+        white_pixels = foodmodel.get_cat_percentage(mask, cat)
+
         if cat == 0: 
             continue
 
-        white_pixels_percentage = foodmodel.get_cat_percentage(mask, cat)
-        print("Number of white pixels in category {}: {}%".format(cat, white_pixels_percentage))
-
-        pixels = np.count_nonzero(mask == cat)
-        Reference_Volume = id_card_height * id_card_width * 0.1
-        Food_Size = (pixels / img_size) * id_card_height * id_card_width
-        Food_Weight = Food_Size**3 * Density / Reference_Volume
-        
-        labels[categories[cat]] = Food_Weight
-        print("Pixels of ", categories[cat], pixels)
-        foodWhite_pixels = max(foodmodel.getSizeOfMask(mask, cat),foodWhite_pixels)
-
-
-    return labels
-
-
+        print("Number of white pixels in category {}: {}".format(cat, white_pixels))
