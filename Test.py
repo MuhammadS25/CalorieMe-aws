@@ -18,8 +18,8 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     Food_modelpath = 'Food_Model/cp2.h5'
     foodModel= Food_Model_Load.FoodModel(Food_modelpath, foodImgPath)
     model = foodModel.loadmodel()
-    image = foodModel.read_image(foodImgPath)
-    mask = foodModel.get_mask(image, model)
+    image, ah, aw = foodModel.read_image(foodImgPath)
+    mask = foodModel.get_mask(image, model, ah, aw)
     cat_values = np.unique(mask)
 
     labels = {}
