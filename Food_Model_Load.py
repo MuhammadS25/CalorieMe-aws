@@ -1,8 +1,12 @@
 import numpy as np
-from tensorflow import keras
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
+from tensorflow import keras
 import numpy as np
 import requests
+import warnings
+warnings.filterwarnings("ignore")
 
 class FoodModel:
     def __init__(self ,modelpath , imgpath):
@@ -16,12 +20,14 @@ class FoodModel:
 
     def read_image(self,image_url):
         response = requests.get(image_url)
-        image = response.content
-        # image = tf.io.read_file(image_url)
-        image = tf.image.decode_png(image, channels=3)
+        image = tf.image.decode_png(response.content, channels=3)
+        print(image.shape)
         h,w = image.shape[:2]
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.resize(image, (256,256), method='nearest')
+
+        image = tf.expand_dims(image, 0)
+        print(image.shape)
 
         return image, h, w
 
@@ -33,6 +39,7 @@ class FoodModel:
     
     
     def get_mask(self, image, model, h, w):
+        print(image.shape)
         pred_mask = self.create_mask(model.predict(image))
         mask = tf.image.resize(pred_mask, (h, w), method='nearest')
         return mask.numpy().astype("uint8").squeeze(axis=2)
