@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import Test, CaloriesEstimation
+import Test, CaloriesEstimation,os
 app = Flask(__name__)
 
 
@@ -8,7 +8,7 @@ def hello_world():
     return 'CalorieMe API'
 
 
-@app.route('/CalorieMe', methods=['GET','POST'])
+@app.route('/CalorieMe-V1', methods=['GET','POST'])
 def predict():
     try:
         if request.method == 'POST':
@@ -18,19 +18,22 @@ def predict():
             print(img_link, img_pixels)
 
             label = Test.getFoodWeight(img_link, img_pixels)
-            # return labels in json format
-            #return jsonify({'msg': 'success', 'label': label})
             json = CaloriesEstimation.getCalories(label)
             return jsonify(json)
-            return jsonify({'msg': 'success', 'size': [img_link, img_pixels]})
     
     except Exception as e:
         return jsonify({'msg': 'error', 'error': str(e)})
 
 
-@app.route('/test', methods=['POST'])
-def test():
-    return request.form['text']
+@app.route('/refresh', methods=['GET'])
+def refresh():
+    try:
+        if request.method == 'GET':
+            os.system('sudo reboot')
+            return jsonify({'msg': 'success'})
+    except Exception as e:
+        return jsonify({'msg': 'error', 'error': str(e)})
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=5000 ,debug=True)
