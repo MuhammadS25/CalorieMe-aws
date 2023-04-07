@@ -23,6 +23,22 @@ def predict():
     
     except Exception as e:
         return jsonify({'msg': 'error', 'error': str(e)})
+    
+@app.route('/CalorieMe-V2', methods=['GET','POST'])
+def predictV2():
+    try:
+        if request.method == 'POST':
+            img_link = request.form['img_link']
+            img_size = request.form['img_size']
+
+            print(img_link, img_size)
+
+            label = Test.getFoodWeightV2(img_link, img_size)
+            json = CaloriesEstimation.getCalories(label)
+            return jsonify(json)
+    
+    except Exception as e:
+        return jsonify({'msg': 'error', 'error': str(e)})
 
 
 @app.route('/refresh', methods=['GET'])
