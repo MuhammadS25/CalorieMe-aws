@@ -19,7 +19,6 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     foodModel= Food_Model_Load.FoodModel(Food_modelpath, foodImgPath)
     model = foodModel.loadmodel()
     image = foodModel.read_image(foodImgPath)
-    image = tf.expand_dims(image, 0)
     mask = foodModel.get_mask(image, model)
     cat_values = np.unique(mask)
 
