@@ -116,6 +116,9 @@ def getFoodWeightV2(imgLink, ref_pixels):
         white_pixels_percentage = foodmodel.get_cat_percentage(mask, cat)
         print("percentage of category {}: {}%".format(cat, white_pixels_percentage))
 
+        if white_pixels_percentage < 0.1:
+            continue
+
         pixels = np.count_nonzero(mask == cat)
         Reference_Volume = id_card_height * id_card_width * 0.1
         Food_Size = (pixels / int(ref_pixels)) * id_card_height * id_card_width
