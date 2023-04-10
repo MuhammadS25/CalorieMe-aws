@@ -29,11 +29,10 @@ def predictV2():
     try:
         if request.method == 'POST':
             img_link = request.form['img_link']
-            ref_pixels = request.form['ref_pixels']
 
-            print(img_link, ref_pixels)
+            print(img_link)
 
-            label = Test.getFoodWeightV2(img_link, ref_pixels)
+            label = Test.getFoodWeightV2(img_link)
             json = CaloriesEstimation.getCalories(label)
             return jsonify(json)
     
