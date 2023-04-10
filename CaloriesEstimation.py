@@ -7,7 +7,7 @@ import json
 
 def getCalories(labels):
     # Importing csv file
-    data = pd.read_csv('/home/calorieME/CalorieMe-aws/foodcalories.csv')
+    data = pd.read_csv('Food_Model/foodcalories.csv')
 
     # # load string from text file
     # with open('category.txt', 'r') as f:
