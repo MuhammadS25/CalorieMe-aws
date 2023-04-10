@@ -24,7 +24,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     Food_modelpath = 'Food_Model/cp2.h5'
     foodModel= Food_Model_Load.FoodModel(Food_modelpath, foodImgPath)
     model = foodModel.loadmodel()
-    image, ah, aw = foodModel.read_image(foodImgPath)
+    image, ah, aw = foodModel.read_image("Food_Model/img.jpg")
     mask = foodModel.get_mask(image, model, ah, aw)
     print(mask.shape)
     cat_values = np.unique(mask)
@@ -60,16 +60,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     return labels
 
 
-def getFoodWeightV2(imgLink, conf):
-
-    # download image from link
-    if os.path.exists('Food_Model/img.jpg'):
-        os.system('rm Food_Model/img.jpg')
-        os.system('wget -O Food_Model/img.jpg {}'.format(imgLink))
-        print("Image Downloaded")
-    else:
-        os.system('wget -O Food_Model/img.jpg {}'.format(imgLink))
-        print("Image Downloaded")
+def getFoodWeightV2(imgLink, conf, ref_pixels):
 
     if os.path.exists('yolov5/runs/detect/exp/'):
         os.system('rm -r yolov5/runs/detect/*')
@@ -90,8 +81,14 @@ def getFoodWeightV2(imgLink, conf):
     model = foodmodel.loadmodel()
     image, ah, aw = foodmodel.read_image("Food_Model/img.jpg")
     mask = foodmodel.get_mask(image, model, ah, aw)
+
+    # check if the image has any food in it
+    if not os.path.exists('{}/runs/detect/exp/labels/img.txt'.format(yolo_dir)):
+        return
+    
     bbox = foodmodel.read_bbox_file('{}/runs/detect/exp/labels/img.txt'.format(yolo_dir))
     mask = foodmodel.match_mask_with_bbox(mask, bbox, ah, aw)
+
     img = tensorflow.image.resize(image, (ah, aw), method='nearest')
     img = img[0].numpy()
 
@@ -102,8 +99,6 @@ def getFoodWeightV2(imgLink, conf):
     id_card_width = 8.57
     id_card_height = 5.4
     actual_ref_size = id_card_height * id_card_width 
-
-    ref_pixels = getIdCard('Food_Model/img.jpg')
 
     labels = {}
     categories = {}
