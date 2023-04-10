@@ -64,17 +64,26 @@ class FoodModel:
             y = int(bbox[i][2]*ah)
             w = int(bbox[i][3]*aw)
             h = int(bbox[i][4]*ah)
-            for j in range(x-w//2, x+w//2):
-                for k in range(y-h//2, y+h//2):
-                    if(mask[k][j] != 0):
-                        mask[k][j] = bbox[i][0] + 1
+            if self.check_first_class(mask, x, y, w, h):
+                for j in range(x-w//2, x+w//2):
+                    for k in range(y-h//2, y+h//2):
+                        if(mask[k][j] != 0):
+                            mask[k][j] = bbox[i][0] + 1
         return mask
+
+    def check_first_class(self, mask, x, y, w, h):
+        unique_values = np.unique(mask[y-h//2:y+h//2, x-w//2:x+w//2])
+        unique_values = unique_values[unique_values != 0]
+        if len(unique_values) == 1:
+            return False
+        else:
+            return True
 
     def get_cat_percentage(self, mask, cat):
         white_pixels = np.count_nonzero(mask == cat)
         total_pixels = mask.shape[0] * mask.shape[1]
         return white_pixels/total_pixels * 100 
-
+    
 
 if __name__ == "__main__":
     modelpath = '/mnt/00F26D4EF26D494C/college/gp/Calories-Estimator/Food_Model/cp2.h5'

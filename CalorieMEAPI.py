@@ -32,7 +32,10 @@ def predictV2():
 
             print(img_link)
 
-            label = Test.getFoodWeightV2(img_link)
+            label = Test.getFoodWeightV2(img_link, 0.25)
+            if label == None:
+                label = Test.getFoodWeightV2(img_link, 0.05)
+                
             json = CaloriesEstimation.getCalories(label)
             return jsonify(json)
     
