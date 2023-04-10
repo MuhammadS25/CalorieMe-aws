@@ -35,9 +35,9 @@ def getIdCard(img_path):
     cv2.fillPoly(mask, [largest_contour], (255, 255, 255))  # draw square on mask
     masked = cv2.bitwise_and(img, mask)  # apply mask to input image
 
-    cv2.imwrite('IdCard.png', img)
-    cv2.imwrite('maskImg.png', mask)
-    cv2.imwrite('maskedImg.png', masked)
+    # cv2.imwrite('IdCard.png', img)
+    # cv2.imwrite('maskImg.png', mask)
+    # cv2.imwrite('maskedImg.png', masked)
 
     gray_img = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
     # Threshold the image to get the white pixels

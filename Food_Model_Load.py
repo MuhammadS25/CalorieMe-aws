@@ -19,8 +19,8 @@ class FoodModel:
         return model
 
     def read_image(self,image_url):
-        response = requests.get(image_url)
-        image = tf.image.decode_png(response.content, channels=3)
+        image = tf.io.read_file(image_url)
+        image = tf.image.decode_png(image, channels=3)
         print(image.shape)
         h,w = image.shape[:2]
         image = tf.image.convert_image_dtype(image, tf.float32)

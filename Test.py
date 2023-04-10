@@ -79,7 +79,7 @@ def getFoodWeightV2(imgLink, conf):
         print("Image not found")
         return
     os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt --conf-thres {}'.format(conf))
-    #run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
+    # run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
 
     modelpath = 'Food_Model/cp2.h5'
     yolo_dir = 'yolov5'
@@ -88,7 +88,7 @@ def getFoodWeightV2(imgLink, conf):
     foodmodel= Food_Model_Load.FoodModel(modelpath, imgLink)
 
     model = foodmodel.loadmodel()
-    image, ah, aw = foodmodel.read_image(imgLink)
+    image, ah, aw = foodmodel.read_image("Food_Model/img.jpg")
     mask = foodmodel.get_mask(image, model, ah, aw)
     bbox = foodmodel.read_bbox_file('{}/runs/detect/exp/labels/img.txt'.format(yolo_dir))
     mask = foodmodel.match_mask_with_bbox(mask, bbox, ah, aw)
