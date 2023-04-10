@@ -5,9 +5,8 @@ import tensorflow
 import os
 import Food_Model_Load
 import sys 
-from ID_segmentation import getIdCard
-# sys.path.insert(1, 'yolov5') 
-# from detect import run
+#sys.path.insert(1, '/home/calorieME/CalorieMe-aws/yolov5') 
+#from detect import run
 
 def getFoodWeight(foodImgPath='',id_pixel_count=0):
     # imgpath = 'Images/mid2.png'
@@ -60,7 +59,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     return labels
 
 
-def getFoodWeightV2(imgLink):
+def getFoodWeightV2(imgLink, ref_pixels):
 
     # download image from link
     if os.path.exists('Food_Model/img.jpg'):
@@ -79,7 +78,7 @@ def getFoodWeightV2(imgLink):
         print("Image not found")
         return
     os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt')
-    # run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True)
+ #   run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True)
 
     modelpath = 'Food_Model/cp2.h5'
     yolo_dir = 'yolov5'
@@ -100,7 +99,6 @@ def getFoodWeightV2(imgLink):
     id_card_width = 8.56
     id_card_height = 5.398
     Density = 1.38
-    ref_pixels = getIdCard('Food_Model/img.jpg')
 
     labels = {}
     categories = {}
@@ -125,7 +123,7 @@ def getFoodWeightV2(imgLink):
         Reference_Volume = id_card_height * id_card_width * 0.1
         Food_Size = (pixels / int(ref_pixels)) * id_card_height * id_card_width
         Food_Weight = Food_Size**3 * Density / Reference_Volume
-        print("Food Weight", Food_Weight)
+        
         labels[categories[cat-1]] = Food_Weight
         print("Pixels of ", categories[cat-1], pixels)
         foodWhite_pixels = max(foodmodel.getSizeOfMask(mask, cat),foodWhite_pixels)

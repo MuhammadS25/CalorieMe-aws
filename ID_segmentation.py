@@ -6,8 +6,7 @@ def angle_cos(p0, p1, p2):
     d1, d2 = (p0-p1).astype('float'), (p2-p1).astype('float')
     return abs( np.dot(d1, d2) / np.sqrt( np.dot(d1, d1)*np.dot(d2, d2) ) )
 
-def getIdCard(img_path):
-    img = cv2.imread(img_path)
+def getIdCard(img):
     img = cv2.GaussianBlur(img, (5, 5), 0)
     rects = []
     for gray in cv2.split(img):
@@ -35,9 +34,6 @@ def getIdCard(img_path):
     cv2.fillPoly(mask, [largest_contour], (255, 255, 255))  # draw square on mask
     masked = cv2.bitwise_and(img, mask)  # apply mask to input image
 
-    # cv2.imwrite('IdCard.png', img)
-    # cv2.imwrite('maskImg.png', mask)
-    # cv2.imwrite('maskedImg.png', masked)
 
     gray_img = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
     # Threshold the image to get the white pixels
