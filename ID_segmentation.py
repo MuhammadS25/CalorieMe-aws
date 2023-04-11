@@ -47,8 +47,8 @@ def getIdCard(img_path):
     return num_white_pixels
 
 if __name__ == '__main__':
-    img = cv2.imread('Orignal.jpg')
-    idCard,whitePixels = getIdCard(img)
+    # img = cv2.imread("Food_Model/img.jpg")
+    whitePixels = getIdCard("Food_Model/img.jpg")
     print(whitePixels)
 
 

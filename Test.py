@@ -6,8 +6,8 @@ import os
 import Food_Model_Load
 import sys 
 from ID_segmentation import getIdCard
-# sys.path.insert(1, 'yolov5') 
-# from detect import run
+sys.path.insert(1, 'yolov5') 
+from detect import run
 
 def getFoodWeight(foodImgPath='',id_pixel_count=0):
     # imgpath = 'Images/mid2.png'
@@ -22,7 +22,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
 
     #initiating Food Model
     Food_modelpath = 'Food_Model/cp2.h5'
-    foodModel= Food_Model_Load.FoodModel(Food_modelpath, foodImgPath)
+    foodModel= Food_Model_Load.FoodModel(Food_modelpath)
     model = foodModel.loadmodel()
     image, ah, aw = foodModel.read_image("Food_Model/img.jpg")
     mask = foodModel.get_mask(image, model, ah, aw)
@@ -60,7 +60,7 @@ def getFoodWeight(foodImgPath='',id_pixel_count=0):
     return labels
 
 
-def getFoodWeightV2(imgLink, conf, ref_pixels):
+def getFoodWeightV2(conf, ref_pixels):
 
     if os.path.exists('yolov5/runs/detect/exp/'):
         os.system('rm -r yolov5/runs/detect/*')
@@ -69,14 +69,12 @@ def getFoodWeightV2(imgLink, conf, ref_pixels):
     if not os.path.exists('Food_Model/img.jpg'):
         print("Image not found")
         return
-    os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt --conf-thres {}'.format(conf))
-    # run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
+    # os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt --conf-thres {}'.format(conf))
+    run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
 
     modelpath = 'Food_Model/cp2.h5'
     yolo_dir = 'yolov5'
-    img_name = imgLink.split('/')[-1].split('.')[0]
-    print(img_name)
-    foodmodel= Food_Model_Load.FoodModel(modelpath, imgLink)
+    foodmodel= Food_Model_Load.FoodModel(modelpath)
 
     model = foodmodel.loadmodel()
     image, ah, aw = foodmodel.read_image("Food_Model/img.jpg")

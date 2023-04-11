@@ -9,9 +9,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 class FoodModel:
-    def __init__(self ,modelpath , imgpath):
+    def __init__(self ,modelpath):
         self.modelpath = modelpath
-        self.imgpath = imgpath
         self.imgSize = (256,256)
 
     def loadmodel(self):

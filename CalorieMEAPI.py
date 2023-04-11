@@ -28,34 +28,36 @@ def predict():
 @app.route('/CalorieMe-V2', methods=['GET','POST'])
 def predictV2():
     try:
+
         if request.method == 'POST':
-            img_link = request.form['img_link']
-            print(img_link)
-            # download image from link
-            if os.path.exists('Food_Model/img.jpg'):
-                os.system('rm Food_Model/img.jpg')
-                os.system('wget -O Food_Model/img.jpg {}'.format(img_link))
-                print("Image Downloaded")
-            else:
-                os.system('wget -O Food_Model/img.jpg {}'.format(img_link))
-                print("Image Downloaded")
+            img_bytes = request.form['img_bytes']
 
-            try:
-                ref_pixels = getIdCard('Food_Model/img.jpg')
-            except:
-                return jsonify({'msg': 'error', 'error': 'Reference object not found'})
+            # recieve image bytes and save it to Food_Model/img.jpg
+            with open("Food_Model/img.jpg", "wb") as fh:
+                fh.write(img_bytes.decode('base64'))
 
-
-            label = Test.getFoodWeightV2(img_link, 0.25, ref_pixels)
-            if label == None:
-                label = Test.getFoodWeightV2(img_link, 0.05, ref_pixels)
-                
-            json = CaloriesEstimation.getCalories(label)
-            return jsonify(json)
-    
+            return run()
+            
     except Exception as e:
         return jsonify({'msg': 'error', 'error': str(e)})
+         
 
+def run():
+
+    try:
+        print("Getting ID Pixels")
+        ref_pixels = getIdCard("Food_Model/img.jpg")
+        print("ID Pixels",ref_pixels)
+    except Exception as e:
+        return jsonify({'msg': 'error', 'error': "Reference object not found"})
+
+    label = Test.getFoodWeightV2(0.25, ref_pixels)
+    if label == None:
+        label = Test.getFoodWeightV2(0.05, ref_pixels)
+        
+    json = CaloriesEstimation.getCalories(label)
+    return jsonify(json)
+    
 
 @app.route('/refresh', methods=['GET'])
 def refresh():
