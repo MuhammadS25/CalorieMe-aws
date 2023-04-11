@@ -30,12 +30,11 @@ def predictV2():
     try:
 
         if request.method == 'POST':
-            file = request.files['img_bytes']
-            image_bytes = file.read()
-            with open('Food_Model/img.jpg', 'wb') as f:
-                f.write(image_bytes)
+            img_bytes = request.files['img_bytes']
 
-        return run()
+            img_bytes.save("Food_Model/img.jpg")
+
+            return run()
             
     except Exception as e:
         return jsonify({'msg': 'error', 'error': str(e)})
