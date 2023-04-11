@@ -6,8 +6,8 @@ import os
 import Food_Model_Load
 import sys 
 from ID_segmentation import getIdCard
-sys.path.insert(1, 'yolov5') 
-from detect import run
+# sys.path.insert(1, 'yolov5') 
+# from detect import run
 
 def getFoodWeight(foodImgPath='',id_pixel_count=0):
     # imgpath = 'Images/mid2.png'
@@ -69,8 +69,8 @@ def getFoodWeightV2(conf, ref_pixels):
     if not os.path.exists('Food_Model/img.jpg'):
         print("Image not found")
         return
-    # os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt --conf-thres {}'.format(conf))
-    run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
+    os.system('python3 yolov5/detect.py --source Food_Model/img.jpg --weights Food_Model/yolov5_best_2.pt --img 413 --augment --save-txt --conf-thres {}'.format(conf))
+    # run(source = "Food_Model/img.jpg", weights = "Food_Model/yolov5_best_2.pt", imgsz= (413,413), save_txt= True, augment= True, conf_thres= conf)
 
     modelpath = 'Food_Model/cp2.h5'
     yolo_dir = 'yolov5'
