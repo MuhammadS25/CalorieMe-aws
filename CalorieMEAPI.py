@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import Test, CaloriesEstimation,os
 from ID_segmentation import getIdCard
+import os 
 app = Flask(__name__)
 
 
@@ -17,6 +18,9 @@ def predict():
             ref_pixels = request.form['ref_pixels']
 
             print(img_link, ref_pixels)
+
+            # download image
+            os.system('wget -O Food_Model/img.jpg ' + img_link)
 
             label = Test.getFoodWeight(img_link, ref_pixels)
             json = CaloriesEstimation.getCalories(label)
@@ -68,6 +72,6 @@ def refresh():
     
 
 if __name__ == '__main__':
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=5000)
-    # app.run(host='0.0.0.0', port=5000, debug=True)
+    # from waitress import serve
+    # serve(app, host="0.0.0.0", port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)

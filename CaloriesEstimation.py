@@ -8,46 +8,8 @@ import json
 def getCalories(labels):
     # Importing csv file
     data = pd.read_csv('Food_Model/foodcalories.csv')
-
-    # # load string from text file
-    # with open('category.txt', 'r') as f:
-    #     categories = f.read()
-
-    # # split string into list with newline as separator
-    # categories = categories.splitlines()
-
-    # # Lower each category in list
-    # categories = [category.lower() for category in categories]
-
-    # desiredCategories = data['Food'].tolist()
-
-    # # lower each category in desiredCategories
-    # #desiredCategories = [category.lower() for category in desiredCategories]
-
-    # commonCategories = []
-    # missing_categories = []
-    # # for every missing category in missing categories extractOne from data['food'] if score is greater than 90 add to common categories
-    # for category in categories:
-    #     if process.extractOne(category, desiredCategories)[1] >= 75:
-    #         # append matched from desiredCategories to commonCategories
-    #         commonCategories.append(process.extractOne(category, desiredCategories)[0])
-    #     else:
-    #         # append category to missing categories
-    #         missing_categories.append(category)
-
-
-    # keys_to_save = {}
-
-    # for label in labels.keys():
-    #     if process.extractOne(label, commonCategories)[1] >= 90 and label not in commonCategories:
-    #         print(label, 'not found')
-    #     else:
-    #         keys_to_save[process.extractOne(label, commonCategories)[0]] = labels[label]
-
-
-        
-    # # print labels
-    # print(keys_to_save)
+    data['Food'] = data['Food'].str.lower()
+    labels = {key.lower(): value for key, value in labels.items()}
 
     cal_map = {}
     total_calories = 0
