@@ -25,7 +25,7 @@ def getCalories(labels):
         serving = int((int, re.findall(r'\d+', serving_series.values[0]))[1][1])
 
     # Estimation Equation
-        estimated_calories = calories * labels[label] / serving
+        estimated_calories = float(calories) * labels[label] / float(serving)
         total_calories += estimated_calories
         cal_map[label] = estimated_calories
 
